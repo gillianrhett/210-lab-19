@@ -61,7 +61,21 @@ class Movie {
     const void display_movie_info() {
         cout << "Title: " << title << endl;
         cout << "Reviews:" << endl;
-        // TODO display the reviews
+        // display the reviews
+        int count = 0;
+        float sum = 0.0;
+        Review* eachReview = reviews;
+        if (eachReview) { // if the list is not empty, display contents
+            while (eachReview) {
+                cout << fixed << setprecision(2) << "\t> Review #" << count + 1 << ": " << eachReview->rating << ": " << eachReview->comment << endl;
+                ++count;
+                sum += eachReview->rating;
+                eachReview = eachReview->next;
+            }
+            cout << "\t> Average: " << fixed << setprecision(2) << sum / count << endl;
+        }
+        else
+            cout << "There are no reviews to display." << endl;
     }
 
     void prepend_review (float rating, string comment) {
@@ -108,49 +122,36 @@ int main() {
                     validFile = true;
             }
             catch(invalid_argument& e) {
-                cout << "Error: " << e.what();
+                cout << "Error: " << e.what() << endl;
             }
-        }  
+        }
+        inFile.close();
         // now we have a valid file open, read from the file into a new Movie object
         cout << "Enter the movie title: ";
         getline(cin, tempInput);
         Movie newMovie(tempInput);
         lineCount = 0;
+        inFile.clear();
+        inFile.seekg(ios::beg);
         while (!inFile.eof()) { // read each line of the file
             getline(inFile, tempInput);
+            cout << tempInput << endl; // TESTING
             if (lineCount % 2 == 0) // even lines have ratings, odd lines have comments
-                rating = stof(tempInput);
+                try {
+                    rating = stof(tempInput);
+                }
+                catch(const exception& e) {
+                    rating = 0; // if it's not a float, put 0 instead
+                    inFile.clear();
+                }
             else
                 comment = tempInput;
             ++lineCount;
+            cout << lineCount << endl; //TESTING
             newMovie.prepend_review(rating, comment);
         }
         // done adding reviews, add (a copy of) this movie to the vector
         movies.push_back(newMovie);
-                
-        /*
-        // copied from my lab 6 code:
-        // go back to the beginning so we can store the items in the array
-        inFile.clear();
-        inFile.seekg(ios::beg);
-        int i = 0;
-        // read each int from the file and store it in the array in the same order
-        string tempInput; // for getting each line from the file
-        int tempInt; // for validating input
-        bool validInput = false;
-        while(i < SIZE && !inFile.eof()) {
-            inFile >> tempInput;
-            try {
-                tempInt = stoi(tempInput);
-                visitors.at(i) = tempInt;
-            }
-            catch(const exception& e) {
-                visitors.at(i) = 0; // if it's not an int, put 0 instead
-                inFile.clear();
-            }        
-            ++i;
-        }
-        */
         cout << "Enter another movie (Y/N)? ";
         getline(cin, another);
     }
