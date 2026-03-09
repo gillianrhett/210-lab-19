@@ -14,22 +14,6 @@ struct Review {
     float rating;
     string comment;
     Review* next;
-
-    void push_front(Review* &head, float rating, string comment) {
-        // make the new node
-        Review* newnode = new Review;
-        newnode->rating = rating;
-        newnode->comment = comment;
-        newnode->next = nullptr;
-        
-        if (head) { // if the list is not empty, prepend the new node
-            newnode->next = head;
-            head = newnode;
-        }
-        else { // newnode will be the first node
-            head = newnode;
-        }
-    }
 };
 
 class Movie {
@@ -79,6 +63,22 @@ class Movie {
         cout << "Reviews:" << endl;
         // TODO display the reviews
     }
+
+    void prepend_review (float rating, string comment) {
+        // make the new node
+        Review* newnode = new Review;
+        newnode->rating = rating;
+        newnode->comment = comment;
+        newnode->next = nullptr;
+        
+        if (this->reviews) { // if the list is not empty, prepend the new node
+            newnode->next = this->reviews;
+            this->reviews = newnode;
+        }
+        else { // newnode will be the first node
+            this->reviews = newnode;
+        }
+    }
 };
 
 int main() {
@@ -88,11 +88,13 @@ int main() {
     // read from the file
     ifstream inFile; // file object to get the items from
     string filename;
-    char another = 'y';
+    string another = "y";
     bool validFile;
     string tempInput;
     int lineCount;
-    while (another == 'y' || another == 'Y') {
+    string comment;
+    float rating;
+    while (another == "y" || another == "Y") {
         validFile = false; // reset for the next movie
         while (!validFile) {
             cout << "Enter the filename: ";
@@ -108,24 +110,24 @@ int main() {
             catch(invalid_argument& e) {
                 cout << "Error: " << e.what();
             }
-            
-            // now we have a valid file open, read from the file into a new Movie object
-            cout << "Enter the movie title: ";
-            getline(cin, tempInput);
-            Movie newMovie(tempInput);
-            lineCount = 0;
-            while (!inFile.eof()) { // read each line of the file
-                getline(inFile, tempInput);
-                if (lineCount % 2 == 0) // even lines have ratings, odd lines have comments
-                    
-                else
-
-                ++lineCount;
-            }
-            // done adding reviews, add (a copy of) this movie to the vector
-            movies.push_back(newMovie);
+        }  
+        // now we have a valid file open, read from the file into a new Movie object
+        cout << "Enter the movie title: ";
+        getline(cin, tempInput);
+        Movie newMovie(tempInput);
+        lineCount = 0;
+        while (!inFile.eof()) { // read each line of the file
+            getline(inFile, tempInput);
+            if (lineCount % 2 == 0) // even lines have ratings, odd lines have comments
+                rating = stof(tempInput);
+            else
+                comment = tempInput;
+            ++lineCount;
+            newMovie.prepend_review(rating, comment);
         }
-        
+        // done adding reviews, add (a copy of) this movie to the vector
+        movies.push_back(newMovie);
+                
         /*
         // copied from my lab 6 code:
         // go back to the beginning so we can store the items in the array
@@ -149,6 +151,8 @@ int main() {
             ++i;
         }
         */
+        cout << "Enter another movie (Y/N)? ";
+        getline(cin, another);
     }
 
     /*
