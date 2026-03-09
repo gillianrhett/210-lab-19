@@ -37,6 +37,7 @@ class Movie {
     //Automate it such that review comments are read from an external file, 
     //and the movie rating is a random double (one decimal place) between 1.0 and 5.0.
 
+
     public:
     // constructor
     Movie(string t = "", Review* r = nullptr) {
