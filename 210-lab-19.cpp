@@ -198,10 +198,9 @@ int main() {
                     }
                 else
                     comment = tempInput;
-                ++lineCount;
-
                 if(lineCount % 2 != 0)
                     newMovie.prepend_review(rating, comment);
+                ++lineCount;
             }
         }
         inFile.close();
