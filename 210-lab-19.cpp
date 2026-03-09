@@ -1,4 +1,4 @@
-// COMSC-210 | Lab 18 | Gillian Rhett
+// COMSC-210 | Lab 19 | Gillian Rhett
 
 #include <iostream>
 #include <string>
@@ -12,28 +12,68 @@ struct Review {
     float rating;
     string comment;
     Review* next;
+
+    void push_front(Review* &head, float rating, string comment) {
+        // make the new node
+        Review* newnode = new Review;
+        newnode->rating = rating;
+        newnode->comment = comment;
+        newnode->next = nullptr;
+        
+        if (head) { // if the list is not empty, prepend the new node
+            newnode->next = head;
+            head = newnode;
+        }
+        else { // newnode will be the first node
+            head = newnode;
+        }
+    }
 };
 
-void push_front(Review*&, float, string);
-void push_back(Review*&, float, string);
+class Movie {
+    string title;
+    Review* reviews;
+
+    //Automate it such that review comments are read from an external file, 
+    //and the movie rating is a random double (one decimal place) between 1.0 and 5.0.
+
+    public:
+    // constructor
+    Movie(string t = "", Review* r = nullptr) {
+        title = t;
+        reviews = r;
+    }
+
+    // destructor
+    ~Movie() {
+        Review* current = reviews;
+        while (current) {
+            reviews = current->next;
+            delete current;
+            current = reviews;
+        }
+        reviews = nullptr;
+    }
+
+    // TODO copy constructor
+
+    // public member functions
+    void set_title(string t) { title = t; }
+
+    string get_title() { return title; }
+
+    void display_movie_info() {
+        cout << "Title: " << title << endl;
+        cout << "Reviews:" << endl;
+        // TODO display the reviews
+    }
+};
 
 int main() {
-    // Ask the user which mode to use, new nodes at the head or the tail of the linked list.
-    cout << "Which linked list method should we use?\n";
-    cout << "\t[1] New nodes are added at the head of the linked list\n";
-    cout << "\t[2] New nodes are added at the tail of the linked list\n";
-    cout << "Choice: ";
-    string sChoice;
-    int iChoice = 0;
-    while (!(iChoice == 1 || iChoice ==2)) {
-        cin >> sChoice;
-        try { iChoice = stoi(sChoice); }
-        catch (invalid_argument& e) {
-            iChoice = 0;
-        }
-        if (!(iChoice == 1 || iChoice ==2))
-            cout << "Enter a number 1 or 2: ";
-    }
+    // TODO read from the file
+    
+    /*
+    
     // Obtain two pieces of data from the user, the rating and the comments. Store these in the linked list.
     // start the linked list
     Review* reviews = nullptr;
@@ -84,34 +124,12 @@ int main() {
     else
         cout << "There are no reviews to display." << endl;
 
-    // delete the list to deallocate the memory
-    // (I know the program is ending anyway but this is good practice)
-    Review* current = reviews;
-    while (current) {
-        reviews = current->next;
-        delete current;
-        current = reviews;
-    }
-    reviews = nullptr;
+    */
 
     return 0;
 }
 
-void push_front(Review* &head, float rating, string comment) {
-    // make the new node
-    Review* newnode = new Review;
-    newnode->rating = rating;
-    newnode->comment = comment;
-    newnode->next = nullptr;
-    
-    if (head) { // if the list is not empty, prepend the new node
-        newnode->next = head;
-        head = newnode;
-    }
-    else { // newnode will be the first node
-        head = newnode;
-    }
-}
+
 
 void push_back(Review* &head, float rating, string comment) {
     // make the new node
