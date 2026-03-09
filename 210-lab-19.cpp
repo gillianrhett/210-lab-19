@@ -200,7 +200,8 @@ int main() {
                     comment = tempInput;
                 ++lineCount;
 
-                newMovie.prepend_review(rating, comment);
+                if(lineCount % 2 != 0)
+                    newMovie.prepend_review(rating, comment);
             }
         }
         inFile.close();
