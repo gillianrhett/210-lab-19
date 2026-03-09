@@ -5,6 +5,7 @@
 #include <stdexcept>
 #include <limits>
 #include <iomanip>
+#include <fstream>
 
 using namespace std;
 
@@ -33,10 +34,6 @@ struct Review {
 class Movie {
     string title;
     Review* reviews;
-
-    //Automate it such that review comments are read from an external file, 
-    //and the movie rating is a random double (one decimal place) between 1.0 and 5.0.
-
 
     public:
     // constructor
@@ -68,7 +65,7 @@ class Movie {
 
     // TODO copy assignment operator for rule of 3
     Movie& operator=(const Movie& orig) {
-
+        
     }
 
     // public member functions
@@ -84,8 +81,62 @@ class Movie {
 };
 
 int main() {
-    // TODO read from the file
-    
+    // vector to store the movies in
+
+    // read from the file
+    ifstream inFile; // file object to get the items from
+    string filename;
+    char another = 'y';
+    bool validFile;
+    string tempInput;
+    while (another == 'y' || another == 'Y') {
+        validFile = false; // reset for the next movie
+        while (!validFile) {
+            cout << "Enter the filename: ";
+            getline(cin, filename);
+            // try to open the file
+            try {
+                inFile.open(filename, ios::in);
+                if(inFile.fail()) 
+                    throw invalid_argument("file not found");
+                else
+                    validFile = true;
+            }
+            catch(invalid_argument& e) {
+                cout << "Error: " << e.what();
+            }
+            
+            // now we have a valid file open, read from the file into a new Movie object
+            cout << "Enter the movie title: ";
+            getline(cin, tempInput);
+            Movie newMovie;
+            while (!inFile.eof()) {
+
+            }
+        }
+        
+        // go back to the beginning so we can store the items in the array
+        inFile.clear();
+        inFile.seekg(ios::beg);
+        int i = 0;
+        // read each int from the file and store it in the array in the same order
+        string tempInput; // for getting each line from the file
+        int tempInt; // for validating input
+        bool validInput = false;
+        while(i < SIZE && !inFile.eof()) {
+            inFile >> tempInput;
+            try {
+                tempInt = stoi(tempInput);
+                visitors.at(i) = tempInt;
+            }
+            catch(const exception& e) {
+                visitors.at(i) = 0; // if it's not an int, put 0 instead
+                inFile.clear();
+            }        
+            ++i;
+        }
+    }
+
     /*
     
     // Obtain two pieces of data from the user, the rating and the comments. Store these in the linked list.
