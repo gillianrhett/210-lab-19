@@ -13,7 +13,7 @@ using namespace std;
 struct Review {
     float rating;
     string comment;
-    Review* next;
+    Review* next = nullptr;
 };
 
 class Movie {
@@ -30,7 +30,7 @@ class Movie {
     // destructor
     ~Movie() {
         Review* current = reviews;
-        while (current) {
+        while (current != nullptr) {
             reviews = current->next;
             delete current;
             current = reviews;
@@ -45,47 +45,41 @@ class Movie {
         
         // copy the reviews
         Review* current = this->reviews;
-        // delete the reviews linked list if there is one
-        while (current) {
-            this->reviews = current->next;
-            delete current;
-            current = this->reviews;
-        }
-        this->reviews = nullptr;
-
-        if(orig.reviews) { // if the original Movie has reviews,
-            // then copy the original linked list into this Movie
+        if(orig.reviews != nullptr) {
             current = orig.reviews;
             while(current) {
                 this->append_review(current->rating, current->comment);
                 current = current->next;
             }
         }
+        // (else orig has no reviews so this->reviews should remain nullptr)
     }
 
     // copy assignment operator for rule of 3
     Movie& operator=(const Movie& orig) {
-        // copy the original's values to this Movie
+    // copy the original's values to this Movie
+        // copy the title
         this->title = orig.title;
         
         // copy the reviews
+        // first delete the reviews linked list if there is one
         Review* current = this->reviews;
-        // delete the reviews linked list if there is one
-        while (current) {
+        while (current != nullptr) {
             this->reviews = current->next;
             delete current;
             current = this->reviews;
         }
         this->reviews = nullptr;
         
-        if(orig.reviews) { // if the original Movie has reviews,
-            // then copy the original linked list into this Movie
+        // then copy the original linked list into this Movie
+        if(orig.reviews != nullptr) {
             current = orig.reviews;
             while(current) {
                 this->append_review(current->rating, current->comment);
                 current = current->next;
             }
         }
+        // (else orig has no reviews so this->reviews should remain nullptr)
 
         return *this;
     }
@@ -102,7 +96,7 @@ class Movie {
         int count = 0;
         float sum = 0.0;
         Review* eachReview = reviews;
-        if (eachReview) { // if the list is not empty, display contents
+        if (eachReview != nullptr) { // if the list is not empty, display contents
             while (eachReview) {
                 cout << fixed << setprecision(2) << "\t> Review #" << count + 1 << ": " << eachReview->rating << ": " << eachReview->comment << endl;
                 ++count;
@@ -122,7 +116,7 @@ class Movie {
         newnode->comment = c;
         newnode->next = nullptr;
         
-        if (this->reviews) { // if the list is not empty, prepend the new node
+        if (this->reviews != nullptr) { // if the list is not empty, prepend the new node
             newnode->next = this->reviews;
             this->reviews = newnode;
         }
@@ -131,14 +125,15 @@ class Movie {
         }
     }
 
-    void append_review(float r, string c) {
+    void append_review(float r, string c) { 
+    // needed for the copy constructor and copy assignment operator to copy reviews in the same order as the original
         // make the new node
         Review* newnode = new Review;
         newnode->rating = r;
         newnode->comment = c;
         newnode->next = nullptr;
         
-        if (this->reviews) { // if the list is not empty
+        if (this->reviews != nullptr) { // if the list is not empty
             // traverse the list to get to the last node
             Review* current = this->reviews;
             while (current->next != nullptr) {
@@ -186,7 +181,7 @@ int main() {
         // now we have a valid file open, read from the file into a new Movie object
         cout << "Enter the movie title: ";
         getline(cin, tempInput);
-        Movie newMovie(tempInput);
+        Movie newMovie(tempInput, nullptr);
         lineCount = 0;
         inFile.clear();
         inFile.seekg(ios::beg);
