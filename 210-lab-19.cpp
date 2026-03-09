@@ -71,7 +71,7 @@ class Movie {
             this->reviews = nullptr;
     }
     */
-   
+
     // public member functions
     void set_title(string t) { title = t; }
 
@@ -113,6 +113,8 @@ class Movie {
         }
     }
 
+    /*
+    // I was only going to use this for the copy constructor and operator=
     void append_review(float r, string c) {
         // make the new node
         Review* newnode = new Review;
@@ -133,6 +135,7 @@ class Movie {
             this->reviews = newnode;
         }
     }
+    */
 };
 
 int main() {
@@ -170,29 +173,28 @@ int main() {
         cout << "Enter the movie title: ";
         getline(cin, tempInput);
         Movie newMovie(tempInput);
-        /* 
-        // commented out the reviews part to test just the Movie part with title
         lineCount = 0;
         inFile.clear();
         inFile.seekg(ios::beg);
         while (!inFile.eof()) { // read each line of the file
-            getline(inFile, tempInput);
+            inFile >> tempInput;
             cout << tempInput << endl; // TESTING
-            if (lineCount % 2 == 0) // even lines have ratings, odd lines have comments
-                try {
-                    rating = stof(tempInput);
-                }
-                catch(const exception& e) {
-                    rating = 0; // if it's not a float, put 0 instead
-                    inFile.clear();
-                }
-            else
-                comment = tempInput;
-            ++lineCount;
-            cout << lineCount << endl; //TESTING
-            newMovie.prepend_review(rating, comment);
+            if(!inFile.eof()) {
+                if (lineCount % 2 == 0) // even lines have ratings, odd lines have comments
+                    try {
+                        rating = stof(tempInput);
+                    }
+                    catch(const exception& e) {
+                        rating = 0.0; // if it's not a float, put 0 instead
+                        inFile.clear();
+                    }
+                else
+                    comment = tempInput;
+                ++lineCount;
+                cout << lineCount << endl; //TESTING
+                newMovie.prepend_review(rating, comment);
+            }
         }
-        */
         // done adding reviews, add (a copy of) this movie to the vector
         movies.push_back(newMovie);
         cout << "Enter another movie (Y/N)? ";
