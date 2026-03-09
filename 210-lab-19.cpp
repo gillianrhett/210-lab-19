@@ -38,21 +38,40 @@ class Movie {
         reviews = nullptr;
     }
 
-    // TODO copy constructor for rule of 3
+    /* 
+    // I'm commenting these out because this is taking longer than I thought and I need to finish the reviews part
+    // copy constructor for rule of 3
     Movie(const Movie& orig) {
-        // TODO delete the reviews linked list if there is one
-
-        // copy the original's values to this Movie
-        this->title = orig.title;
-        //TODO copy the linked list
-
+        
     }
 
     // TODO copy assignment operator for rule of 3
     Movie& operator=(const Movie& orig) {
+        // copy the original's values to this Movie
+        this->title = orig.title;
         
+        // copy the reviews
+        if(orig.reviews) { 
+            Review* current = this->reviews;
+            // delete the reviews linked list if there is one
+            while (current) {
+                this->reviews = current->next;
+                delete current;
+                current = this->reviews;
+            }
+            this->reviews = nullptr;
+            // now copy the original linked list into this Movie
+            current = orig.reviews;
+            while(current) {
+                this->append_review(current->rating, current->comment);
+                current = current->next;
+            }
+        }
+        else // original has no reviews
+            this->reviews = nullptr;
     }
-
+    */
+   
     // public member functions
     void set_title(string t) { title = t; }
 
@@ -78,11 +97,11 @@ class Movie {
             cout << "There are no reviews to display." << endl;
     }
 
-    void prepend_review (float rating, string comment) {
+    void prepend_review(float r, string c) {
         // make the new node
         Review* newnode = new Review;
-        newnode->rating = rating;
-        newnode->comment = comment;
+        newnode->rating = r;
+        newnode->comment = c;
         newnode->next = nullptr;
         
         if (this->reviews) { // if the list is not empty, prepend the new node
@@ -90,6 +109,27 @@ class Movie {
             this->reviews = newnode;
         }
         else { // newnode will be the first node
+            this->reviews = newnode;
+        }
+    }
+
+    void append_review(float r, string c) {
+        // make the new node
+        Review* newnode = new Review;
+        newnode->rating = r;
+        newnode->comment = c;
+        newnode->next = nullptr;
+        
+        if (this->reviews) { // if the list is not empty
+            // traverse the list to get to the last node
+            Review* current = this->reviews;
+            while (current->next != nullptr) {
+                current = current->next;
+            }
+            // link the new node to the end of the list
+            current->next = newnode;
+        }
+        else { // if the list is empty, make this new node is the first item
             this->reviews = newnode;
         }
     }
@@ -105,8 +145,8 @@ int main() {
     string another = "y";
     bool validFile;
     string tempInput;
-    int lineCount;
-    string comment;
+    int lineCount = 0;
+    string comment = "";
     float rating;
     while (another == "y" || another == "Y") {
         validFile = false; // reset for the next movie
@@ -130,6 +170,8 @@ int main() {
         cout << "Enter the movie title: ";
         getline(cin, tempInput);
         Movie newMovie(tempInput);
+        /* 
+        // commented out the reviews part to test just the Movie part with title
         lineCount = 0;
         inFile.clear();
         inFile.seekg(ios::beg);
@@ -150,65 +192,17 @@ int main() {
             cout << lineCount << endl; //TESTING
             newMovie.prepend_review(rating, comment);
         }
+        */
         // done adding reviews, add (a copy of) this movie to the vector
         movies.push_back(newMovie);
         cout << "Enter another movie (Y/N)? ";
         getline(cin, another);
     }
 
-    /*
-    
-    // Obtain two pieces of data from the user, the rating and the comments. Store these in the linked list.
-    // start the linked list
-    Review* reviews = nullptr;
-    string sRating;
-    float fRating;
-    string comment;
-    char another = 'Y';
-    while (another == 'Y' || another == 'y') {
-        fRating = -1.0;
-        cout << "Enter review rating 0-5: ";
-        while (!(0.0 <= fRating && fRating <= 5.0)) {
-            cin >> sRating;
-            try {
-                fRating = stof(sRating);
-            }
-            catch(invalid_argument& e) {
-                fRating = -1.0;
-                cin.clear();
-            }
-            if (!(0.0 <= fRating && fRating <= 5.0))
-                cout << "Enter a number 0.0 - 5.0: ";
-        }
-        cout << "Enter review comments: ";
-        cin.ignore(numeric_limits<streamsize>::max(), '\n');
-        getline(cin, comment);
-        if(iChoice == 1)
-            push_front(reviews, fRating, comment);
-        else
-            push_back(reviews, fRating, comment);
-        cout << "Enter another review? Y/N: ";
-        cin >> another;
+    // done getting input, display the info about the movies
+    for (Movie m : movies) {
+        m.display_movie_info();
     }
-
-    // After all reviews have been input, traverse the linked list to output the data and calculate/output the average review.
-    cout << "Outputting all reviews:" << endl;
-    Review* eachReview = reviews;
-    int count = 0;
-    float sum = 0.0;
-    if (eachReview) { // if the list is not empty, display contents
-        while (eachReview) {
-            cout << fixed << setprecision(2) << "\t> Review #" << count + 1 << ": " << eachReview->rating << ": " << eachReview->comment << endl;
-            ++count;
-            sum += eachReview->rating;
-            eachReview = eachReview->next;
-        }
-        cout << "\t> Average: " << fixed << setprecision(2) << sum / count << endl;
-    }
-    else
-        cout << "There are no reviews to display." << endl;
-
-    */
 
     return 0;
 }
