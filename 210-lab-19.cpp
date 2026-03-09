@@ -55,14 +55,27 @@ class Movie {
         reviews = nullptr;
     }
 
-    // TODO copy constructor
+    // TODO copy constructor for rule of 3
+    Movie(const Movie& orig) {
+        // TODO delete the reviews linked list if there is one
+
+        // copy the original's values to this Movie
+        this->title = orig.title;
+        //TODO copy the linked list
+
+    }
+
+    // TODO copy assignment operator for rule of 3
+    Movie& operator=(const Movie& orig) {
+
+    }
 
     // public member functions
     void set_title(string t) { title = t; }
 
-    string get_title() { return title; }
+    const string get_title() { return title; }
 
-    void display_movie_info() {
+    const void display_movie_info() {
         cout << "Title: " << title << endl;
         cout << "Reviews:" << endl;
         // TODO display the reviews
