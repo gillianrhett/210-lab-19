@@ -6,6 +6,7 @@
 #include <limits>
 #include <iomanip>
 #include <fstream>
+#include <vector>
 
 using namespace std;
 
@@ -82,6 +83,7 @@ class Movie {
 
 int main() {
     // vector to store the movies in
+    vector <Movie> movies;
 
     // read from the file
     ifstream inFile; // file object to get the items from
@@ -89,6 +91,7 @@ int main() {
     char another = 'y';
     bool validFile;
     string tempInput;
+    int lineCount;
     while (another == 'y' || another == 'Y') {
         validFile = false; // reset for the next movie
         while (!validFile) {
@@ -109,12 +112,22 @@ int main() {
             // now we have a valid file open, read from the file into a new Movie object
             cout << "Enter the movie title: ";
             getline(cin, tempInput);
-            Movie newMovie;
-            while (!inFile.eof()) {
+            Movie newMovie(tempInput);
+            lineCount = 0;
+            while (!inFile.eof()) { // read each line of the file
+                getline(inFile, tempInput);
+                if (lineCount % 2 == 0) // even lines have ratings, odd lines have comments
+                    
+                else
 
+                ++lineCount;
             }
+            // done adding reviews, add (a copy of) this movie to the vector
+            movies.push_back(newMovie);
         }
         
+        /*
+        // copied from my lab 6 code:
         // go back to the beginning so we can store the items in the array
         inFile.clear();
         inFile.seekg(ios::beg);
@@ -135,6 +148,7 @@ int main() {
             }        
             ++i;
         }
+        */
     }
 
     /*
@@ -192,27 +206,4 @@ int main() {
     */
 
     return 0;
-}
-
-
-
-void push_back(Review* &head, float rating, string comment) {
-    // make the new node
-    Review* newnode = new Review;
-    newnode->rating = rating;
-    newnode->comment = comment;
-    newnode->next = nullptr;
-    
-    if (head) { // if the list is not empty
-        // traverse the list to get to the last node
-        Review* current = head;
-        while (current->next != nullptr) {
-            current = current->next;
-        }
-        // link the new node to the end of the list
-        current->next = newnode;
-    }
-    else { // if the list is empty, make this new node is the first item
-        head = newnode;
-    }
 }
