@@ -18,7 +18,7 @@ struct Review {
 
 class Movie {
     string title;
-    Review* reviews;
+    Review* reviews = nullptr;
 
     public:
     // constructor
