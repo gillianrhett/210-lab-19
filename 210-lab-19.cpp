@@ -38,39 +38,57 @@ class Movie {
         reviews = nullptr;
     }
 
-    /* 
-    // I'm commenting these out because this is taking longer than I thought and I need to finish the reviews part
     // copy constructor for rule of 3
     Movie(const Movie& orig) {
-        
-    }
-
-    // TODO copy assignment operator for rule of 3
-    Movie& operator=(const Movie& orig) {
         // copy the original's values to this Movie
         this->title = orig.title;
         
         // copy the reviews
-        if(orig.reviews) { 
-            Review* current = this->reviews;
-            // delete the reviews linked list if there is one
-            while (current) {
-                this->reviews = current->next;
-                delete current;
-                current = this->reviews;
-            }
-            this->reviews = nullptr;
-            // now copy the original linked list into this Movie
+        Review* current = this->reviews;
+        // delete the reviews linked list if there is one
+        while (current) {
+            this->reviews = current->next;
+            delete current;
+            current = this->reviews;
+        }
+        this->reviews = nullptr;
+
+        if(orig.reviews) { // if the original Movie has reviews,
+            // then copy the original linked list into this Movie
             current = orig.reviews;
             while(current) {
                 this->append_review(current->rating, current->comment);
                 current = current->next;
             }
         }
-        else // original has no reviews
-            this->reviews = nullptr;
     }
-    */
+
+    // copy assignment operator for rule of 3
+    Movie& operator=(const Movie& orig) {
+        // copy the original's values to this Movie
+        this->title = orig.title;
+        
+        // copy the reviews
+        Review* current = this->reviews;
+        // delete the reviews linked list if there is one
+        while (current) {
+            this->reviews = current->next;
+            delete current;
+            current = this->reviews;
+        }
+        this->reviews = nullptr;
+        
+        if(orig.reviews) { // if the original Movie has reviews,
+            // then copy the original linked list into this Movie
+            current = orig.reviews;
+            while(current) {
+                this->append_review(current->rating, current->comment);
+                current = current->next;
+            }
+        }
+
+        return *this;
+    }
 
     // public member functions
     void set_title(string t) { title = t; }
@@ -113,8 +131,6 @@ class Movie {
         }
     }
 
-    /*
-    // I was only going to use this for the copy constructor and operator=
     void append_review(float r, string c) {
         // make the new node
         Review* newnode = new Review;
@@ -135,7 +151,6 @@ class Movie {
             this->reviews = newnode;
         }
     }
-    */
 };
 
 int main() {
@@ -148,8 +163,8 @@ int main() {
     string another = "y";
     bool validFile;
     string tempInput;
-    int lineCount = 0;
-    string comment = "";
+    int lineCount;
+    string comment;
     float rating;
     while (another == "y" || another == "Y") {
         validFile = false; // reset for the next movie
@@ -168,7 +183,6 @@ int main() {
                 cout << "Error: " << e.what() << endl;
             }
         }
-        inFile.close();
         // now we have a valid file open, read from the file into a new Movie object
         cout << "Enter the movie title: ";
         getline(cin, tempInput);
@@ -177,8 +191,7 @@ int main() {
         inFile.clear();
         inFile.seekg(ios::beg);
         while (!inFile.eof()) { // read each line of the file
-            inFile >> tempInput;
-            cout << tempInput << endl; // TESTING
+            getline(inFile, tempInput);
             if(!inFile.eof()) {
                 if (lineCount % 2 == 0) // even lines have ratings, odd lines have comments
                     try {
@@ -191,10 +204,11 @@ int main() {
                 else
                     comment = tempInput;
                 ++lineCount;
-                cout << lineCount << endl; //TESTING
+
                 newMovie.prepend_review(rating, comment);
             }
         }
+        inFile.close();
         // done adding reviews, add (a copy of) this movie to the vector
         movies.push_back(newMovie);
         cout << "Enter another movie (Y/N)? ";
